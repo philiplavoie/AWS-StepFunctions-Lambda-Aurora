@@ -1,0 +1,118 @@
+{
+    "Comment": "Order Processing Business Process",
+    "StartAt": "ReceiveOrder",
+    "States": {
+    
+      "ReceiveOrder": {
+        "Type": "Task",
+        "Resource": "[USE YOUR FN ARN HERE]",
+        "Next": "CheckInventory"
+      },
+      
+      "CheckInventory": {
+        "Type" : "Choice",
+        "Choices": [
+          {
+            "Variable": "$.inventoryExists",
+            "BooleanEquals": true,
+            "Next": "ProcessOrder"
+          },
+          {
+            "Variable": "$.inventoryExists",
+            "BooleanEquals": false,
+            "Next": "DeclineOrderBranch"
+          }
+        ]
+      },
+  
+      "ProcessOrder": {
+        "Comment": "------------Inventory Exists - Process Order-------------",
+        "Type" : "Task",
+        "Resource": "[USE YOUR FN ARN HERE]",
+        "Next": "UpdateInventory"
+      },
+      
+      "UpdateInventory": {
+        "Type" : "Task",
+        "Resource": "[USE YOUR FN ARN HERE]",
+        "Next": "ChargeCustomer"
+      },
+          
+      "ChargeCustomer": {
+        "Type" : "Task",
+        "Resource": "[USE YOUR FN ARN HERE]",
+        "Next": "ShipOrderBranch"
+      },
+      
+      "ShipOrderBranch": {
+        "Comment": "------------Inventory - Ship and Write Order to Aurora DB-------------",
+        "Type": "Parallel",
+        "Branches": [
+          {
+              "StartAt": "ShipOrder",
+               "States": {
+                "ShipOrder": {
+                  "Type" : "Task",
+                  "Resource": "[USE YOUR FN ARN HERE]",
+                  "End": true
+                }
+              }
+            },
+          {
+            "StartAt": "WriteToAurora",
+            "States": {
+              "WriteToAurora": {
+                "Type": "Task",
+                "Resource": "[USE YOUR FN ARN HERE]",
+                "End": true
+              }
+            }
+          }
+        ],
+        "Next": "SendNotification"
+      },
+      
+      "DeclineOrderBranch": {
+        "Comment": "------------No Inventory - Decline Order-------------",
+        "Type": "Parallel",
+        "Branches": [
+          {
+            "StartAt": "DeclineOrder",
+            "States": {
+              "DeclineOrder": {
+                "Type": "Task",
+                "Resource": "[USE YOUR FN ARN HERE]",
+                "End": true
+              }
+            }
+          },
+          {
+            "StartAt": "NotifyProcurement",
+            "States": {
+              "NotifyProcurement": {
+                "Type": "Task",
+                "Resource": "[USE YOUR FN ARN HERE]",
+                "End": true
+              }
+            }
+          }
+        ],
+        "Next": "SendNotification"
+      },
+      
+      "SendNotification": {
+        "Comment": "------------Continue General Processing-------------", 
+        "Type" : "Task",
+        "Resource": "[USE YOUR FN ARN HERE]",
+        "Next": "UpdateOrderStatus"
+      },
+          
+      "UpdateOrderStatus": {
+        "Type" : "Task",
+        "Resource": "[USE YOUR FN ARN HERE]",
+        "End": true
+      }
+  
+    }
+  }
+  
