@@ -1,0 +1,167 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+  
+	"LambdaExecutionRole": {
+	 "Type": "AWS::IAM::Role",
+	 "Properties": {
+		"AssumeRolePolicyDocument": {
+		   "Version" : "2012-10-17",
+		   "Statement": [ {
+			  "Effect": "Allow",
+			  "Principal": {
+				 "Service": "lambda.amazonaws.com"
+			  },
+			  "Action": [ "sts:AssumeRole" ]
+		   } ]
+		},
+    "Path": "/",
+    "Policies": [
+      {
+        "PolicyName": "LogRolePolicy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:logs:*:*:*"
+            }
+          ]
+        }
+      }
+    ]
+		}
+	},
+	
+    "ReceiveOrder": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "receiveorder.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+    
+    "ProcessOrder": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "processorder.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+    
+    "DeclineOrder": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "declineorder.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+ 
+    "UpdateInventory": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "updateinventory.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+      
+    "ChargeCustomer": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "chargecustomer.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },    
+      
+    "ShipOrder": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "shiporder.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+      
+    "NotifyProcurement": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "notifyprocurement.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+      
+    "SendNotification": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "sendnotification.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    },
+      
+    "UpdateOrderStatus": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "updateorderstatus.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "[USE YOUR BUCKET HERE]",
+          "S3Key": "processorder.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "25"
+      }
+    }  
+  }
+}
